@@ -2,33 +2,38 @@ import React, { useState, useEffect, useRef } from "react";
 import { Board } from "../models/Board";
 import { CellComponent } from "./CellComponent";
 import { Cell } from "../models/Cell";
+import { Player } from "../models/Player";
 
 interface BoardProps {
   board: Board;
   setBoard: (board: Board) => void;
+  currentPlayer: Player | null;
+  swapPlayer: () => void;
 }
 
-export const BoardComponent: React.FC<BoardProps> = ({ board, setBoard }) => {
+export const BoardComponent: React.FC<BoardProps> = ({
+  board,
+  setBoard,
+  currentPlayer,
+  swapPlayer,
+}) => {
   const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleMouseDown = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
         setSelectedCell(null);
-        board.highlightCells(null);
-        const newBoard = board.getCopyBoard();
-        setBoard(newBoard);
       }
     };
 
-    document.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -39,9 +44,13 @@ export const BoardComponent: React.FC<BoardProps> = ({ board, setBoard }) => {
       selectedCell.figure?.canMove(cell)
     ) {
       selectedCell.moveFigure(cell);
+      swapPlayer();
       setSelectedCell(null);
+      highlightCells();
     } else {
-      setSelectedCell(cell);
+      if (cell.figure?.color === currentPlayer?.color) {
+        setSelectedCell(cell);
+      }
     }
   }
 
@@ -58,21 +67,24 @@ export const BoardComponent: React.FC<BoardProps> = ({ board, setBoard }) => {
   }, [selectedCell]);
 
   return (
-    <div ref={containerRef} className="board">
-      {board.cells.map((row, rowIndex) => (
-        <React.Fragment key={rowIndex}>
-          {row.map((cell) => (
-            <CellComponent
-              click={click}
-              cell={cell}
-              key={cell.id}
-              selected={
-                cell.x === selectedCell?.x && cell.y === selectedCell?.y
-              }
-            />
-          ))}
-        </React.Fragment>
-      ))}
+    <div>
+      <h2>Текущий игрок {currentPlayer?.color}</h2>
+      <div ref={containerRef} className="board">
+        {board.cells.map((row, rowIndex) => (
+          <React.Fragment key={rowIndex}>
+            {row.map((cell) => (
+              <CellComponent
+                click={click}
+                cell={cell}
+                key={cell.id}
+                selected={
+                  cell.x === selectedCell?.x && cell.y === selectedCell?.y
+                }
+              />
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   );
 };
