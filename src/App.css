@@ -164,3 +164,63 @@ body {
   font-weight: bold;
   text-align: center;
 }
+
+/* App.css */
+/* ... */
+
+/* Media queries for mobile devices */
+@media (max-width: 767px) {
+  .App {
+    flex-direction: column;
+  }
+  
+  .game {
+    margin-top: 20px;
+  }
+  
+  .board {
+    width: calc(48px * 8);
+    height: calc(48px * 8);
+  }
+
+  .cell {
+    width: 48px;
+    height: 48px;
+  }
+
+  .cell img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .lost {
+    width: 320px;
+  }
+  
+  .timer {
+    flex-direction: row;
+    margin-top: 20px;
+  }
+
+  .time {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .active-time {
+    font-size: 28px;
+  }
+
+  .popup-restart-button {
+    width: 80px;
+    height: 80px;
+    font-size: 24px;
+  }
+
+  .time-input {
+    width: 160px;
+    height: 40px;
+    font-size: 24px;
+  }
+}

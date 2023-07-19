@@ -55,7 +55,7 @@ export const BoardComponent: React.FC<BoardProps> = ({
   }
 
   function highlightCells() {
-    board.highlightCells(selectedCell);
+    board.highlightCells(selectedCell, currentPlayer?.color);
     const newBoard = board.getCopyBoard();
     setBoard(newBoard);
   }
