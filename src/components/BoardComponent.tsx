@@ -68,7 +68,6 @@ export const BoardComponent: React.FC<BoardProps> = ({
 
   return (
     <div>
-      <h2>Текущий игрок {currentPlayer?.color}</h2>
       <div ref={containerRef} className="board">
         {board.cells.map((row, rowIndex) => (
           <React.Fragment key={rowIndex}>

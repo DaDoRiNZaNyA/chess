@@ -6,18 +6,26 @@ interface TimerProps{
     currentPlayer: Player | null;
     restart: () => void;
     setCurrentPlayer: (currentPlayer: Player | null) => void;
+    setWinPlayer: (winPlayer: Player) => void;
+    winPlayer: Player | null;
+    gameTime: number;
+    start: number;
 }
 
-export const Timer: React.FC<TimerProps> = ({currentPlayer, restart, setCurrentPlayer}) => {
-    const [blackTime, setBlackTime] = useState(300);
-    const [whiteTime, setWhiteTime] = useState(300);
+export const Timer: React.FC<TimerProps> = ({currentPlayer, restart, setCurrentPlayer, setWinPlayer, winPlayer, gameTime, start}) => {
+    const [blackTime, setBlackTime] = useState(gameTime);
+    const [whiteTime, setWhiteTime] = useState(gameTime);
     const timer = useRef<null | ReturnType<typeof setInterval>>(null);
     
     useEffect(() => {
-        startTimer();
-    }, [currentPlayer])
+        if (winPlayer === null && start === 1){
+            startTimer();
+        }
+    }, [currentPlayer, winPlayer, start])
 
     function startTimer(){
+        setBlackTime(gameTime);
+        setWhiteTime(gameTime);
         if (timer.current){
             clearInterval(timer.current)
         }
@@ -32,19 +40,38 @@ export const Timer: React.FC<TimerProps> = ({currentPlayer, restart, setCurrentP
     function decrementWhiteTime(){
         setWhiteTime(prev => prev -1);
     }
+    useEffect(() => {
+        if (whiteTime === 0){
+            setWinPlayer(new Player(Colors.BLACK))
+            if (timer.current){
+                clearInterval(timer.current)
+                setBlackTime(gameTime);
+                setWhiteTime(gameTime);
+                setCurrentPlayer(new Player(Colors.WHITE));
+            }
+        } else if (blackTime === 0){
+            setWinPlayer(new Player(Colors.WHITE))
+            if (timer.current){
+                clearInterval(timer.current);
+                setBlackTime(gameTime);
+                setWhiteTime(gameTime);
+                setCurrentPlayer(new Player(Colors.WHITE));
+            }
+        }
+    }, [whiteTime, blackTime])
 
     const handleRestart = () => {
-        setBlackTime(300);
-        setWhiteTime(300);
+        setBlackTime(gameTime);
+        setWhiteTime(gameTime);
         setCurrentPlayer(new Player(Colors.WHITE));
         restart();
     }
 
     return (
-    <div>
-        <button onClick={handleRestart}>Restart</button>
-        <h2>{blackTime}</h2>
-        <h2>{whiteTime}</h2>
+    <div className='timer'>
+        <h2 className={`time ${currentPlayer?.color===Colors.BLACK ? "active-time" : ""}`}>{blackTime}</h2>
+        <button className='restart-button' onClick={handleRestart}>Restart</button>
+        <h2 className={`time ${currentPlayer?.color===Colors.WHITE ? "active-time" : ""}`}>{whiteTime}</h2>
     </div>
     )
 }

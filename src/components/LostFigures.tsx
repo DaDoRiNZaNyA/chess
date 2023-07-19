@@ -11,7 +11,7 @@ export const LostFigures: React.FC<LostFigureProps> = ({figures}) => {
         {
             figures.map(figure => 
                 <div key={figure.id}>
-                    {figure.logo && <img width={20} height={20} src={figure.logo} alt={figure.name}/>}
+                    {figure.logo && <img width={30} height={30} src={figure.logo} alt={figure.name}/>}
                 </div>    
             )
         }
